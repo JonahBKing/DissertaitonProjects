@@ -48,14 +48,12 @@ panel <- read_dta ("anes_92_97_panel.dta") %>%
 
 
 
-longpanel <- panel %>% 
-  pivot_longer(
-    cols = !id , 
-    names_to = c("variable" , "year"),
-    names_sep = "_",
-    values_to = "score")%>% 
-  pivot_wider(names_from = variable ,
-              values_from = score)
+longpanel<- panel %>% 
+  pivot_longer(!id, names_to = c(".value", "year"), names_pattern = '(.*?)(\\d+)') %>%
+  rename_with(~str_remove(., '_')) %>% 
+  mutate(year = as.numeric(year)+1900)
+
+
 
 
 summary(panel$eq_tot_92)
